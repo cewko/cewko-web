@@ -80,3 +80,25 @@ class Article(models.Model):
         reading_time = math.ceil(word_count / words_per_minute)
 
         return max(reading_time, 1)
+
+
+class Comment(models.Model):
+    article = models.ForeignKey(
+        Article,
+        on_delete=models.CASCADE,
+        related_name="comments"
+    )
+    nickname = models.CharField(max_length=64)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name = "Comment"
+        verbose_name_plural = "Comments"
+        indexes = [
+            models.Index(fields=["article", "created_at"])
+        ]
+
+    def __str__(self):
+        return f"Comment by {self.nickname} on {self.article.title}"

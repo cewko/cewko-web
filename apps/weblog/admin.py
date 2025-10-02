@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article 
+from .models import Article, Comment
 
 
 @admin.register(Article)
@@ -32,4 +32,15 @@ class ArticleAdmin(admin.ModelAdmin):
 
     readonly_fields = ["created_at", "updated_at"]
 
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ["nickname", "article", "created_at", "body_preview"]
+    list_filter = ["created_at"]
+    search_fields = ["nickname", "body", "article__title"]
+    date_hierarchy = "created_at"
+    ordering = ["-created_at"]
     
+    def body_preview(self, obj):
+        return obj.body[:50] + "..." if len(obj.body) > 50 else obj.body
+    body_preview.short_description = "Comment Preview"
