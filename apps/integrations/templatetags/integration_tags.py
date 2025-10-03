@@ -1,5 +1,5 @@
 from django import template
-from apps.integrations.services import DiscordService, LastFmService
+from apps.integrations.services import DiscordService, LastFmService, WeatherService
 
 register = template.Library()
 
@@ -22,3 +22,11 @@ def lastfm_widget():
     data = service.get_data()
     
     return {'track': data}
+
+
+@register.inclusion_tag('integrations/weather_widget.html')
+def weather_widget():
+    service = WeatherService()
+    data = service.get_data()
+    
+    return {'weather': data}

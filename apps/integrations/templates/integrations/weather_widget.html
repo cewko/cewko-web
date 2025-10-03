@@ -1,0 +1,10 @@
+{% if weather %}
+    <div>
+        <div>Warsaw, Poland</div>
+        <div>{{ weather.time }}</div>
+        <div>{{ weather.temperature }}°C</div>
+        <div>{{ weather.description }}</div>
+    </div>
+{% else %}
+    <div>Weather data unavailable</div>
+{% endif %}
