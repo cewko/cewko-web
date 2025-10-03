@@ -18,11 +18,14 @@ INSTALLED_APPS = [
 
     # Local apps
     "apps.weblog",
+    "apps.analytics",
+    "apps.integrations",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "apps.analytics.middleware.AnalyticsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
