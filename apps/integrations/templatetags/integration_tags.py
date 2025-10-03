@@ -1,5 +1,5 @@
 from django import template
-from apps.integrations.services import DiscordService
+from apps.integrations.services import DiscordService, LastFmService
 
 register = template.Library()
 
@@ -14,3 +14,11 @@ def discord_status_widget():
         status = data["status"]
 
     return {"status": status}
+
+
+@register.inclusion_tag('integrations/lastfm_widget.html')
+def lastfm_widget():
+    service = LastFmService()
+    data = service.get_data()
+    
+    return {'track': data}
