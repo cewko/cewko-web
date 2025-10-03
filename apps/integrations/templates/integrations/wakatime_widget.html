@@ -1,0 +1,8 @@
+{% if stats %}
+    <div>
+        <div>Lifetime: {{ stats.total_hours }} hour{{ stats.total_hours|pluralize }} {{ stats.total_minutes }} minute{{ stats.total_minutes|pluralize }}</div>
+        <div>Average: {{ stats.daily_hours }} hour{{ stats.daily_hours|pluralize }} {{ stats.daily_minutes }} minute{{ stats.daily_minutes|pluralize }}</div>
+    </div>
+{% else %}
+    <div>Wakatime data unavailable</div>
+{% endif %}

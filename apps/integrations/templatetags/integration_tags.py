@@ -1,5 +1,10 @@
 from django import template
-from apps.integrations.services import DiscordService, LastFmService, WeatherService
+from apps.integrations.services import (
+    DiscordService, 
+    LastFmService, 
+    WeatherService,
+    WakatimeService
+)
 
 register = template.Library()
 
@@ -30,3 +35,11 @@ def weather_widget():
     data = service.get_data()
     
     return {'weather': data}
+
+
+@register.inclusion_tag('integrations/wakatime_widget.html')
+def wakatime_widget():
+    service = WakatimeService()
+    data = service.get_data()
+    
+    return {'stats': data}
