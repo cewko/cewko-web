@@ -4,7 +4,8 @@ from apps.integrations.services import (
     LastFmService, 
     WeatherService,
     WakatimeService,
-    MastodonService
+    MastodonService,
+    GithubService
 )
 
 register = template.Library()
@@ -52,3 +53,11 @@ def mastodon_widget():
     data = service.get_data()
 
     return {"status": data}
+
+
+@register.inclusion_tag("integrations/github_widget.html")
+def github_widget():
+    service = GithubService()
+    data = service.get_data()
+
+    return {"github": data}

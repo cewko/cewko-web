@@ -1,0 +1,9 @@
+{% if github %}
+    <div>
+        <div>Total contributions: {{ github.total_contributions }}</div>
+        <div>Current streak: {{ github.current_streak }} days</div>
+        <div>Longest streak: {{ github.longest_streak }} days</div>
+    </div>
+{% else %}
+    <div>Github data unavailable</div>
+{% endif %}
