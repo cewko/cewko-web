@@ -1,0 +1,17 @@
+{% if status %}
+    <div style="display: flex; gap: 10px;">
+        <img src="{{ status.avatar }}" alt="{{ status.username }}" style="width: 64px; height: 64px; border-radius: 4px;">
+        <div style="flex: 1;">
+            <div>
+                <span>{{ status.username }}</span>
+                <span>•</span>
+                <span>{{ status.created_at }}</span>
+            </div>
+            <a href="{{ status.url }}" target="_blank" rel="noopener">
+                <div>{{ status.content }}</div>
+            </a>
+        </div>
+    </div>
+{% else %}
+    <div>No recent status</div>
+{% endif %}

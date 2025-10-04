@@ -3,7 +3,8 @@ from apps.integrations.services import (
     DiscordService, 
     LastFmService, 
     WeatherService,
-    WakatimeService
+    WakatimeService,
+    MastodonService
 )
 
 register = template.Library()
@@ -43,3 +44,11 @@ def wakatime_widget():
     data = service.get_data()
     
     return {'stats': data}
+
+
+@register.inclusion_tag("integrations/mastodon_widget.html")
+def mastodon_widget():
+    service = MastodonService()
+    data = service.get_data()
+
+    return {"status": data}
