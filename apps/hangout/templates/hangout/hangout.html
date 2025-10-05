@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hangout</title>
+    <style>
+        body { font-family: monospace; padding: 10px; }
+        #messages { height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+        .msg { margin-bottom: 5px; }
+        .nick { font-weight: bold; }
+        input { margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Hangout</h1>
+    <div id="status">Connecting...</div>
+    <div id="messages"></div>
+    <input type="text" id="nickname" placeholder="nickname" value="anonymous">
+    <input type="text" id="message" placeholder="message">
+    <button onclick="send()">Send</button>
+
+    <script>
+        const ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws/hangout/');
+        const msgs = document.getElementById('messages');
+        const msgInput = document.getElementById('message');
+        const nickInput = document.getElementById('nickname');
+        const status = document.getElementById('status');
+        
+        ws.onopen = () => status.textContent = 'Connected';
+        ws.onclose = () => status.textContent = 'Disconnected';
+        ws.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            if (data.type === 'message') {
+                const div = document.createElement('div');
+                div.className = 'msg';
+                div.innerHTML = `<span class="nick">${data.nickname}:</span> ${data.content}`;
+                msgs.appendChild(div);
+                msgs.scrollTop = msgs.scrollHeight;
+            }
+        };
+        
+        function send() {
+            if (msgInput.value.trim()) {
+                ws.send(JSON.stringify({
+                    type: 'message',
+                    nickname: nickInput.value || 'anonymous',
+                    content: msgInput.value
+                }));
+                msgInput.value = '';
+            }
+        }
+        
+        msgInput.onkeyup = (e) => { if (e.key === 'Enter') send(); };
+    </script>
+</body>
+</html>
