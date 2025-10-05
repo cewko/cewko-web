@@ -15,6 +15,18 @@ DATABASES = {
     }
 }
 
+# Channel layers for websocket communication
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(config('REDIS_HOST', default='127.0.0.1'), config('REDIS_PORT', default=6379, cast=int))],
+        },
+    },
+}
+
+REDIS_URL = config('REDIS_URL', default='redis://localhost:6379')
+
 # Development-specific settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

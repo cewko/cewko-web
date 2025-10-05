@@ -9,17 +9,22 @@ SECRET_KEY = config('SECRET_KEY')
 
 # Application definition
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    
+    # Third-party apps
+    "channels",
 
     # Local apps
     "apps.weblog",
     "apps.analytics",
     "apps.integrations",
+    "apps.hangout",
 ]
 
 MIDDLEWARE = [
@@ -50,7 +55,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "core.wsgi.application"
+# Chanells
+ASGI_APPLICATION = "core.asgi.application"
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
