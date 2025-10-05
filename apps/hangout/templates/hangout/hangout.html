@@ -1,56 +1,153 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Hangout</title>
     <style>
-        body { font-family: monospace; padding: 10px; }
-        #messages { height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
-        .msg { margin-bottom: 5px; }
-        .nick { font-weight: bold; }
-        input { margin-right: 5px; }
+        body {
+            font-family: monospace;
+            padding: 10px;
+        }
+        #messages {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .msg {
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        .msg-content {
+            flex: 1;
+        }
+        .msg-time {
+            color: #888;
+            font-size: 0.9em;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+        .nick {
+            font-weight: bold;
+        }
+        input {
+            margin-right: 5px;
+        }
+        #error {
+            display: none;
+            color: red;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <h1>Hangout</h1>
-    <div id="status">Connecting...</div>
+    <div id="error"></div>
     <div id="messages"></div>
-    <input type="text" id="nickname" placeholder="nickname" value="anonymous">
-    <input type="text" id="message" placeholder="message">
+    <input type="text" id="nickname" placeholder="nickname" value="anonymous" />
+    <input type="text" id="message" placeholder="message" />
     <button onclick="send()">Send</button>
 
     <script>
-        const ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws/hangout/');
-        const msgs = document.getElementById('messages');
-        const msgInput = document.getElementById('message');
-        const nickInput = document.getElementById('nickname');
-        const status = document.getElementById('status');
-        
-        ws.onopen = () => status.textContent = 'Connected';
-        ws.onclose = () => status.textContent = 'Disconnected';
+        const ws = new WebSocket(
+            (location.protocol === "https:" ? "wss://" : "ws://") +
+            location.host +
+            "/ws/hangout/"
+        );
+        const msgs = document.getElementById("messages");
+        const msgInput = document.getElementById("message");
+        const nickInput = document.getElementById("nickname");
+        const errorDiv = document.getElementById("error");
+
+        function displayMessage(data) {
+            const div = document.createElement("div");
+            div.className = "msg";
+
+            const contentSpan = document.createElement("span");
+            contentSpan.className = "msg-content";
+
+            const nickSpan = document.createElement("span");
+            nickSpan.className = "nick";
+            nickSpan.textContent = data.nickname;
+
+            contentSpan.appendChild(nickSpan);
+
+            if (data.is_highlighted) {
+                contentSpan.appendChild(document.createTextNode(" ⭐"));
+            }
+
+            if (data.from_discord) {
+                contentSpan.appendChild(document.createTextNode(" [discord]"));
+            }
+
+            contentSpan.appendChild(document.createTextNode(": " + data.content));
+
+            const timeSpan = document.createElement("span");
+            timeSpan.className = "msg-time";
+            if (data.timestamp) {
+                const timestamp = new Date(data.timestamp);
+                const now = new Date();
+                const isToday = timestamp.toDateString() === now.toDateString();
+                
+                if (isToday) {
+                    timeSpan.textContent = timestamp.toLocaleTimeString([], { 
+                        hour: "2-digit", 
+                        minute: "2-digit" 
+                    });
+                } else {
+                    timeSpan.textContent = timestamp.toLocaleDateString([], { 
+                        month: "short", 
+                        day: "numeric" 
+                    }) + " " + timestamp.toLocaleTimeString([], { 
+                        hour: "2-digit", 
+                        minute: "2-digit" 
+                    });
+                }
+        }
+
+    div.appendChild(contentSpan);
+    div.appendChild(timeSpan);
+
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+}
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = "block";
+            setTimeout(() => {
+                errorDiv.style.display = "none";
+            }, 3000);
+        }
+
         ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
-            if (data.type === 'message') {
-                const div = document.createElement('div');
-                div.className = 'msg';
-                div.innerHTML = `<span class="nick">${data.nickname}:</span> ${data.content}`;
-                msgs.appendChild(div);
-                msgs.scrollTop = msgs.scrollHeight;
+            if (data.type === "message") {
+                displayMessage(data);
+            } else if (data.type === "error") {
+                showError(data.message);
             }
         };
-        
+
         function send() {
             if (msgInput.value.trim()) {
-                ws.send(JSON.stringify({
-                    type: 'message',
-                    nickname: nickInput.value || 'anonymous',
-                    content: msgInput.value
-                }));
-                msgInput.value = '';
+                ws.send(
+                    JSON.stringify({
+                        type: "message",
+                        nickname: nickInput.value || "anonymous",
+                        content: msgInput.value,
+                    })
+                );
+                msgInput.value = "";
             }
         }
-        
-        msgInput.onkeyup = (e) => { if (e.key === 'Enter') send(); };
+
+        msgInput.onkeyup = (e) => {
+            if (e.key === "Enter") send();
+        };
     </script>
 </body>
 </html>
