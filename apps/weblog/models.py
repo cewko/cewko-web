@@ -61,8 +61,9 @@ class Article(models.Model):
     
     def get_body_html(self):
         """Convert markdown body to HTML"""
+        clean_body = self.body.strip()
         return markdown.markdown(
-            self.body,
+            clean_body,
             extensions=['extra', 'codehilite', 'fenced_code', 'nl2br']
         )
     

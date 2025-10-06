@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>weblog</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .article {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        .article:last-child {
+            border-bottom: none;
+        }
+        .article-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .rss-link {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <h1>weblog <a href="{% url 'weblog:rss_feed' %}" class="rss-link">[rss]</a></h1>
+    
+    {% if articles %}
+        {% for article in articles %}
+            <div class="article">
+                <h2><a href="{% url 'weblog:article_page' article.slug %}">{{ article.title }}</a></h2>
+                <div class="article-meta">
+                    {{ article.published_at|date:"F d, Y" }} • 
+                    {{ article.get_reading_time }} min read • 
+                    {{ article.comments.count }} comment{{ article.comments.count|pluralize }}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>no articles yet</p>
+    {% endif %}
+</body>
+</html>
