@@ -1,4 +1,5 @@
 import re
+import html
 import requests
 from datetime import datetime
 from decouple import config
@@ -61,6 +62,7 @@ class MastodonService(BaseIntegrationService):
             content = status['content']
             content = re.sub(r'<a[^>]*href="[^"]*"[^>]*>.*?</a>', '[link] ', content, flags=re.DOTALL)
             content = strip_tags(content)
+            content = html.unescape(content)
             
             media_text = ""
             if status.get("media_attachments"):
