@@ -1,0 +1,20 @@
+{% if articles %}
+    <div>
+        <h3>recent articles</h3>
+        <ul style="list-style: none; padding: 0;">
+            {% for article in articles %}
+                <li style="margin-bottom: 8px;">
+                    <a href="{% url 'weblog:article_page' article.slug %}">
+                        {{ article.title }}
+                    </a>
+                    <span style="color: #666; font-size: 0.9em;">
+                        ({{ article.published_at|date:"M d" }})
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'weblog:article_inventory' %}">view all &rarr;</a>
+    </div>
+{% else %}
+    <div>no articles yet</div>
+{% endif %}
