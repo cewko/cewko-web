@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "channels",
 
     # Local apps
+    "apps.pages",
     "apps.weblog",
     "apps.analytics",
     "apps.integrations",

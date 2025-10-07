@@ -28,6 +28,7 @@ from core.sitemaps import sitemaps
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", include("apps.pages.urls")),
     path("weblog/", include("apps.weblog.urls")),
     path("sitemap.xml/", sitemap, {
         "sitemaps": sitemaps

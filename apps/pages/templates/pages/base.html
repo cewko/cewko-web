@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}cewko{% endblock %}</title>
+    <style>
+        body { font-family: monospace; max-width: 900px; margin: 0 auto; padding: 20px; }
+        a { color: blue; }
+        nav { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ccc; }
+        nav a { margin-right: 15px; }
+        .section { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'pages:home' %}">home</a>
+        <a href="{% url 'pages:about' %}">about</a>
+        <a href="{% url 'weblog:article_inventory' %}">weblog</a>
+        <a href="#">github</a>
+        <a href="#">soundcloud</a>
+        <a href="#">discord</a>
+        <a href="#">telegram</a>
+        <a href="#">mastodon</a>
+        <a href="#">twitter</a>
+        <a href="#">steam</a>
+        <a href="#donations">donations</a>
+    </nav>
+    
+    {% block content %}{% endblock %}
+</body>
+</html>
