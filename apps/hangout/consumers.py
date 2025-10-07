@@ -1,11 +1,13 @@
 import json
 import asyncio
+import hashlib
 import redis.asyncio as redis
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.utils import timezone
 from decouple import config
 from .models import Message
+from apps.analytics.online_tracker import OnlineUserTracker
 
 
 class HangoutConsumer(AsyncWebsocketConsumer):
@@ -14,13 +16,17 @@ class HangoutConsumer(AsyncWebsocketConsumer):
         self.room_group_name = "hangout_main"
         self.redis_client = None
         self.redis_listener_task = None
+        self.heartbeat_task = None
         self.highlight_user_id = config("DISCORD_USER_ID", default="")
+        self.online_tracker = OnlineUserTracker()
+        self.user_id = None
 
         self.banned_words = config(
             "BANNED_NICKNAMES",
+            default="",
             cast=lambda nicknames: [
                 nickname.lower() for nickname in nicknames.split(",")
-            ]
+            ] if nicknames else []
         )
 
     async def connect(self):
@@ -36,7 +42,27 @@ class HangoutConsumer(AsyncWebsocketConsumer):
             decode_responses=True
         )
         
+        ip = self.scope.get('client', ['unknown'])[0] if self.scope.get('client') else 'unknown'
+        
+        session = self.scope.get('session', {})
+        session_key = None
+        
+        if hasattr(session, 'session_key'):
+            session_key = session.session_key
+        elif hasattr(session, '_session_key'):
+            session_key = session._session_key
+        
+        if not session_key:
+            headers = dict(self.scope.get('headers', []))
+            user_agent = headers.get(b'user-agent', b'unknown').decode('utf-8', errors='ignore')[:50]
+            session_key = hashlib.md5(f"{ip}:{user_agent}".encode()).hexdigest()[:16]
+        
+        self.user_id = f"{ip}:{session_key}"
+        
+        await self.online_tracker.mark_user_online(self.user_id, self.redis_client)
+        
         self.redis_listener_task = asyncio.create_task(self.listen_for_discord_messages())
+        self.heartbeat_task = asyncio.create_task(self.online_heartbeat())
 
         recent_messages = await self.get_recent_messages()
         for message in recent_messages:
@@ -49,18 +75,53 @@ class HangoutConsumer(AsyncWebsocketConsumer):
                 "is_highlighted": str(message.get("discord_user_id", "")) == self.highlight_user_id
             }))
 
+        online_count = await self.online_tracker.get_online_count(self.redis_client)
+        
+        await self.send(text_data=json.dumps({
+            "type": "online_count",
+            "count": online_count
+        }))
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                "type": "online_count_update",
+                "count": online_count
+            }
+        )
+
         await self.send(text_data=json.dumps({
             "type": "system",
             "message": "connected to hangout"
         }))
 
-    async def disconnect(self, close_code):
+    async def disconnect(self, close_code):     
         if self.redis_listener_task:
             self.redis_listener_task.cancel()
             try:
                 await self.redis_listener_task
             except asyncio.CancelledError:
                 pass
+        
+        if self.heartbeat_task:
+            self.heartbeat_task.cancel()
+            try:
+                await self.heartbeat_task
+            except asyncio.CancelledError:
+                pass
+        
+        if self.user_id and self.redis_client:
+            await self.online_tracker.mark_user_offline(self.user_id, self.redis_client)
+            
+            online_count = await self.online_tracker.get_online_count(self.redis_client)
+            
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "online_count_update",
+                    "count": online_count
+                }
+            )
         
         if self.redis_client:
             await self.redis_client.close()
@@ -74,6 +135,10 @@ class HangoutConsumer(AsyncWebsocketConsumer):
         try:
             data = json.loads(text_data)
             message_type = data.get("type", "message")
+
+            if message_type == "heartbeat":
+                await self.online_tracker.heartbeat(self.user_id, self.redis_client)
+                return
 
             if message_type == "message":
                 nickname = data.get("nickname", "anonymous")[:50]
@@ -145,6 +210,23 @@ class HangoutConsumer(AsyncWebsocketConsumer):
             'is_highlighted': event.get('is_highlighted', False),
             'from_discord': event.get('from_discord', False)
         }))
+
+    async def online_count_update(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'online_count',
+            'count': event['count']
+        }))
+
+    async def online_heartbeat(self):
+        try:
+            while True:
+                await asyncio.sleep(30)
+                if self.user_id and self.redis_client:
+                    await self.online_tracker.heartbeat(self.user_id, self.redis_client)
+        except asyncio.CancelledError:
+            print(f"[Hangout] Heartbeat task cancelled for {self.user_id}")
+        except Exception as error:
+            print(f"Error in online heartbeat: {error}")
 
     async def listen_for_discord_messages(self):
         try:

@@ -131,8 +131,23 @@
             }
         } else if (data.type === "error") {
             showError(data.message);
+        } else if (data.type === "online_count") {
+            // Update analytics widget with online count
+            const onlineElement = document.getElementById('online-now');
+            if (onlineElement) {
+                onlineElement.textContent = data.count;
+            }
         }
     };
+
+    // Add heartbeat sender (every 25 seconds)
+    setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+                type: 'heartbeat'
+            }));
+        }
+    }, 25000);
     
     ws.onerror = () => {
         showError("connection error");
