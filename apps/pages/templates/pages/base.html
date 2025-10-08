@@ -4,28 +4,107 @@
     <meta charset="UTF-8">
     <title>{% block title %}cewko{% endblock %}</title>
     <style>
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease-out;
+        }
+
+        #preloader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .preloader-content {
+            text-align: center;
+            font-family: monospace;
+        }
+
+        .preloader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #333;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        .preloader-text {
+            color: #333;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         body { font-family: monospace; max-width: 900px; margin: 0 auto; padding: 20px; }
         a { color: blue; }
         nav { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ccc; }
         nav a { margin-right: 15px; }
         .section { margin-bottom: 30px; }
+        
+        .page-content {
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+        
+        .page-content.visible {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
-    <nav>
-        <a href="{% url 'pages:home' %}">home</a>
-        <a href="{% url 'pages:about' %}">about</a>
-        <a href="{% url 'weblog:article_inventory' %}">weblog</a>
-        <a href="#">github</a>
-        <a href="#">soundcloud</a>
-        <a href="#">discord</a>
-        <a href="#">telegram</a>
-        <a href="#">mastodon</a>
-        <a href="#">twitter</a>
-        <a href="#">steam</a>
-        <a href="#donations">donations</a>
-    </nav>
-    
-    {% block content %}{% endblock %}
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-spinner"></div>
+            <div class="preloader-text">loading...</div>
+        </div>
+    </div>
+
+    <div class="page-content" id="page-content">
+        <nav>
+            <a href="{% url 'pages:home' %}">home</a>
+            <a href="{% url 'pages:about' %}">about</a>
+            <a href="{% url 'weblog:article_inventory' %}">weblog</a>
+            <a href="#">github</a>
+            <a href="#">soundcloud</a>
+            <a href="#">discord</a>
+            <a href="#">telegram</a>
+            <a href="#">mastodon</a>
+            <a href="#">twitter</a>
+            <a href="#">steam</a>
+            <a href="#donations">donations</a>
+        </nav>
+        
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            const content = document.getElementById('page-content');
+            
+            setTimeout(function() {
+                preloader.classList.add('fade-out');
+                content.classList.add('visible');
+                
+                setTimeout(function() {
+                    preloader.style.display = 'none';
+                }, 300);
+            }, 200);
+        });
+    </script>
 </body>
 </html>
