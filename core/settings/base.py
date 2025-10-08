@@ -1,5 +1,6 @@
 from pathlib import Path
 from decouple import config, Csv
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -91,3 +92,42 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Sitemaps
 SITE_ID = 1
+
+
+# Celery Configuration
+CELERY_BROKER_URL = config("REDIS_URL", default="redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = config("REDIS_URL", default="redis://localhost:6379/0")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_RESULT_EXPIRES = 3600
+
+CELERY_BEAT_SCHEDULE = {
+    "refresh-discord-status": {
+        "task": "apps.integrations.tasks.refresh_discord_status",
+        "schedule": 60.0,
+    },
+    "refresh-lastfm-track": {
+        "task": "apps.integrations.tasks.refresh_lastfm_track",
+        "schedule": 5.0,
+    },
+    "refresh-weather-data": {
+        "task": "apps.integrations.tasks.refresh_weather_data",
+        "schedule": 30.0,
+    },
+    "refresh-wakatime-stats": {
+        "task": "apps.integrations.tasks.refresh_wakatime_stats",
+        "schedule": 60.0,
+    },
+    "refresh-mastodon-status": {
+        "task": "apps.integrations.tasks.refresh_mastodon_status",
+        "schedule": 60.0,
+    },
+    "refresh-github-contributions": {
+        "task": "apps.integrations.tasks.refresh_github_contributions",
+        "schedule": 60.0,
+    },
+}
