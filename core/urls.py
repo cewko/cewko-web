@@ -17,6 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from debug_toolbar.toolbar import debug_toolbar_urls
 from django.contrib.sitemaps.views import sitemap
 from core.sitemaps import (
     StaticViewSitemap, 
@@ -33,4 +34,4 @@ urlpatterns = [
     path("sitemap.xml/", sitemap, {
         "sitemaps": sitemaps
         }, name="django.contrib.sitemaps.views.sitemap")
-]
+] + debug_toolbar_urls()
