@@ -1,20 +1,15 @@
 {% if articles %}
-    <div>
-        <h3>recent articles</h3>
-        <ul style="list-style: none; padding: 0;">
-            {% for article in articles %}
-                <li style="margin-bottom: 8px;">
-                    <a href="{% url 'weblog:article_page' article.slug %}">
-                        {{ article.title }}
-                    </a>
-                    <span style="color: #666; font-size: 0.9em;">
-                        ({{ article.published_at|date:"M d" }})
-                    </span>
-                </li>
-            {% endfor %}
-        </ul>
-        <a href="{% url 'weblog:article_inventory' %}">view all &rarr;</a>
-    </div>
-{% else %}
-    <div>no articles yet</div>
+<div class="weblog-content">
+    {% for article in articles %}
+        <a href="{% url 'weblog:article_page' article.slug %}" class="blog-post-link" target="_blank">
+            <div class="blog-post-title">
+                <span class="blog-title-char">: : </span>
+                <span class="blog-title-text">{{ article.title }}</span>
+            </div>
+        </a>
+        <div class="blog-post-meta">┗ {{ article.published_at|date:"F j, Y" }} | 
+            {{ article.get_word_count }} words | 
+            {{ article.get_reading_time }} minute{{ article.get_reading_time|pluralize }}</div>
+    {% endfor %}
+</div>
 {% endif %}

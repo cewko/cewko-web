@@ -1,6 +1,7 @@
 {% extends "pages/base.html" %}
 {% load static %}
 {% load integration_tags %}
+{% load weblog_tags %}
 
 
 {% block extra_css %}
@@ -137,6 +138,26 @@
                 <div class="widget-bar"></div>
                 {% github_widget %}
             </div>
+        </div>
+    </div>
+    <div class="right-bottom-column">
+    <!-- Weblog Widget -->
+    <div class="widget">
+        <div class="widget-container">
+            <div class="weblog-header">
+                <div class="widget-title">
+                    <a href="{% url 'weblog:article_inventory' %}" class="widget-title-link">
+                        <span class="widget-title-text">WEBLOG</span>
+                    </a>
+                </div>
+                <div class="weblog-rss">
+                    <a href="{% url 'weblog:rss_feed' %}" class="widget-title-link">
+                        <span class="bracket-up">[</span><span class="widget-title-text">RSS</span><span class="bracket-up">]</span>
+                    </a>
+                </div>
+            </div>
+            <div class="widget-bar"></div>
+            {% recent_articles_widget limit=3 %}
         </div>
     </div>
 </div>

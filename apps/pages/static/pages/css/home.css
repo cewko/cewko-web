@@ -364,3 +364,54 @@
 .tooltip.show {
   opacity: 1;
 }
+
+/* Weblog Widget */
+.weblog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.weblog-rss {
+    color: var(--color-primary);
+    font-family: "Retro Pixel Thick", sans-serif;
+    font-size: 36px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+.bracket-up {
+    display: inline-block;
+    transform: translateY(-3px);
+}
+
+.weblog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.blog-post-title {
+    font-family: "Ari-W9500 Display", monospace;
+    font-size: 20px;
+    color: var(--color-primary);
+}
+.blog-post-meta {
+    font-family: "Ari-W9500 Display", monospace;
+    font-size: 16px;
+    color: var(--color-secondary);
+    text-align: right;
+}
+.blog-post-link,
+.blog-post-link:hover,
+.blog-post-link:visited,
+.blog-post-link:active {
+    text-decoration: none;
+    color: var(--color-primary);
+}
+
+.blog-title-text {
+    display: inline;
+}
+
+.blog-title-text:hover {
+    color: var(--color-secondary);
+}
