@@ -1,0 +1,116 @@
+/* Profile Widget */
+.profile-widget {
+  background: var(--color-background);
+  border: 3px solid var(--color-primary);
+  padding: 0.9375rem 1.25rem;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.header-section {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.625rem;
+}
+
+.header-line {
+  flex: 1;
+  border-top: 5px solid var(--color-secondary);
+}
+
+.main-section {
+  display: flex;
+  gap: 0.625rem;
+}
+
+.profile-image {
+  border: 2px solid var(--color-secondary);
+  width: 250px;
+  height: 310px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 18.1875rem;
+}
+
+.info-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.info-label {
+  background: var(--color-secondary);
+  color: var(--color-background);
+  font-family: "Retro Pixel Arcade";
+  font-size: 1.625rem;
+  padding: 7px 10px;
+  min-width: 6.5rem;
+  line-height: 1;
+}
+
+.info-value {
+  color: var(--color-primary);
+  font-family: "Ari-W9500 Display", sans-serif;
+  font-size: 1.7rem;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.signature {
+  color: var(--color-secondary);
+  font-family: "Retro Pixel Thick", sans-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: right;
+}
+
+.signature-line {
+  border-top: 5px solid var(--color-secondary);
+  margin-top: -5px;
+}
+
+.footer-section {
+  display: flex;
+  padding-top: 20px;
+  padding-bottom: 5px;
+}
+
+.footer-text {
+  color: var(--color-primary);
+  font-family: "Retro Pixel Arcade", sans-serif;
+  font-size: 2rem;
+  flex: 1;
+  line-height: 1;
+}
+
+/* About Widget */
+.about-text {
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  line-height: 1.6;
+}

@@ -11,13 +11,13 @@
   src: url("../fonts/retro-pixel-thick.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+}
 
-  @font-face {
-    font-family: "Retro Pixel Arcade";
-    src: url("../fonts/retro-pixel-arcade") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-  }
+@font-face {
+  font-family: "Retro Pixel Arcade";
+  src: url("../fonts/retro-pixel-arcade.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 /* color palette */
