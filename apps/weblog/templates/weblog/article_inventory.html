@@ -1,59 +1,56 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>weblog</title>
-    <style>
-        body {
-            font-family: monospace;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .article {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #ccc;
-        }
-        .article:last-child {
-            border-bottom: none;
-        }
-        .article-meta {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 10px;
-        }
-        a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-        .rss-link {
-            float: right;
-        }
-    </style>
-</head>
-<body>
-    <h1>weblog <a href="{% url 'weblog:rss_feed' %}" class="rss-link">[rss]</a></h1>
-    
-    {% if articles %}
-        {% for article in articles %}
-            <div class="article">
-                <h2><a href="{% url 'weblog:article_page' article.slug %}">{{ article.title }}</a></h2>
+{% extends "pages/base.html" %}
+{% load static %}
+
+{% block title %}cewko's inventory{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'weblog/css/article_inventory.css' %}" />
+{% endblock %}
+
+{% block left_column %}
+<div class="widget">
+    <div class="widget-container">
+        <div class="weblog-header">
+            <div class="widget-title">WEBLOG INVENTORY</div>
+            <div class="weblog-rss">
+                <a href="{% url 'weblog:rss_feed' %}" class="widget-title-link">
+                    <span class="bracket-up">[</span><span class="widget-title-text">RSS</span><span class="bracket-up">]</span>
+                </a>
+            </div>
+        </div>
+        <div class="widget-bar"></div>
+        
+        {% if articles %}
+        <div class="articles-list">
+            {% for article in articles %}
+            <div class="article-item">
+                <a href="{% url 'weblog:article_page' article.slug %}" class="article-link">
+                    <div class="article-title">
+                        <span class="article-prefix">: :</span><span class="article-title-text">{{ article.title }}</span>
+                    </div>
+                </a>
                 <div class="article-meta">
-                    {{ article.published_at|date:"F d, Y" }} • 
-                    {{ article.get_reading_time }} min read • 
-                    {{ article.comments.count }} comment{{ article.comments.count|pluralize }}
+                    <span>┗ {{ article.published_at|date:"F j, Y" }}</span>
+                    <span class="meta-separator">|</span>
+                    <span>{{ article.get_word_count }} words</span>
+                    <span class="meta-separator">|</span>
+                    <span>{{ article.get_reading_time }} minute{{ article.get_reading_time|pluralize }}</span>
+                    <span class="meta-separator">|</span>
+                    <span>{{ article.comments.count }} opinion{{ article.comments.count|pluralize }}</span>
                 </div>
             </div>
-        {% endfor %}
-    {% else %}
-        <p>no articles yet</p>
-    {% endif %}
-</body>
-</html>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination (TODO) -->
+        <div class="pagination">
+            <span class="disabled">&lt;</span>
+            <span class="current">[ 1 of 1 ]</span>
+            <span class="disabled">&gt;</span>
+        </div>
+        {% else %}
+        <p style="font-family: 'Ari-W9500 Display', monospace; color: var(--color-primary);">no articles yet</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

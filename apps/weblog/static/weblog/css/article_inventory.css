@@ -1,0 +1,109 @@
+/* Weblog specific styles */
+.weblog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weblog-rss {
+  color: var(--color-primary);
+  font-family: "Retro Pixel Thick", sans-serif;
+  font-size: 36px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.bracket-up {
+  display: inline-block;
+  transform: translateY(-3px);
+}
+
+.articles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.article-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 25px;
+  border-bottom: 3px solid var(--color-secondary);
+}
+
+.article-title {
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 24px;
+  color: var(--color-primary);
+  text-decoration: none;
+  display: inline;
+}
+
+.article-prefix {
+  color: var(--color-primary);
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.article-link {
+  text-decoration: none;
+}
+
+.article-title-text {
+  display: inline;
+}
+
+.article-title-text:hover {
+  color: var(--color-secondary);
+}
+
+.article-meta {
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 16px;
+  color: var(--color-secondary);
+  padding-left: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meta-separator {
+  color: var(--color-secondary);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 18px;
+}
+
+.pagination a {
+  color: var(--color-primary);
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 2px solid var(--color-secondary);
+  background: var(--color-background);
+}
+
+.pagination a:hover {
+  background: var(--color-secondary);
+  color: var(--color-background);
+}
+
+.pagination .current {
+  color: var(--color-secondary);
+  padding: 8px 12px;
+}
+
+.pagination .disabled {
+  color: var(--color-secondary);
+  opacity: 0.5;
+  padding: 8px 12px;
+  pointer-events: none;
+}
