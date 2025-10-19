@@ -24,9 +24,9 @@
             <div class="widget-title">NAVIGATION</div>
             <div class="widget-bar"></div>
             <div class="widget-links">
-              <a href="#" class="widget-link">Home</a>
-              <a href="#" class="widget-link">About me</a>
-              <a href="#" class="widget-link">WebLog</a>
+              <a href="{% url 'pages:home' %}" class="widget-link">Home</a>
+              <a href="{% url 'pages:about' %}" class="widget-link">About me</a>
+              <a href="{% url 'weblog:article_inventory' %}" class="widget-link">WebLog</a>
             </div>
           </div>
         </div>
@@ -74,7 +74,7 @@
     {% endblock %} 
 
     <script src="{% static 'pages/js/checkCreditsCollision.js' %}"></script>
-    
+
     {% block extra_js %}
     
     {% endblock %}
