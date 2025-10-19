@@ -244,3 +244,25 @@
 .recent-link:active {
   color: var(--color-primary);
 }
+
+/* Weather Widget */
+.weather-widget {
+  flex: 1;
+}
+
+.weather-location {
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  margin-top: -4px;
+  margin-bottom: -3px;
+}
+
+.weather-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 1rem;
+  color: var(--color-secondary);
+}

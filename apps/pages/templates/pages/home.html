@@ -110,6 +110,20 @@
 
 {% endblock %}
 
+{% block right_column_extra %}
+<div class="widget weather-widget">
+    <div class="widget-container">
+        <div class="widget-title">
+            <a href="https://open-meteo.com/" class="widget-title-link" target="_blank">
+                <span class="widget-title-text">WEATHER</span>
+            </a>
+        </div>
+        <div class="widget-bar"></div>
+        {% weather_widget %}
+    </div>
+</div>
+{% endblock %}
+
 {% block extra_js %}
 <script src="{% static 'pages/js/home.js' %}"></script>
 {% endblock %}

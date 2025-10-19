@@ -1,10 +1,9 @@
 {% if weather %}
-    <div>
-        <div>Warsaw, Poland</div>
-        <div>{{ weather.time }}</div>
-        <div>{{ weather.temperature }}°C</div>
-        <div>{{ weather.description }}</div>
-    </div>
-{% else %}
-    <div>Weather data unavailable</div>
+<div class="weather-location">Poland | UTC+02:00</div>
+<div class="weather-stats">
+  <div>: Time: 99:99</div>
+  <div>: Temperature: {{ weather.temperature }}°C</div>
+  <div>: Humidity: {{ weather.humidity }}%</div>
+  <div>: {{ weather.description }}</div>
+</div>
 {% endif %}
