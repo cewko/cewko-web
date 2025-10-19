@@ -1,108 +1,81 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{{ article.title }}</title>
-    <style>
-        body {
-            font-family: monospace;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        .article-meta {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 20px;
-        }
-        .article-body {
-            margin-bottom: 40px;
-        }
-        .article-body pre {
-            background: #f5f5f5;
-            padding: 10px;
-            overflow-x: auto;
-        }
-        .article-body code {
-            background: #f5f5f5;
-            padding: 2px 4px;
-        }
-        .comments {
-            margin-top: 40px;
-            border-top: 1px solid #ccc;
-            padding-top: 20px;
-        }
-        .comment {
-            margin-bottom: 20px;
-            padding: 10px;
-            background: #f9f9f9;
-        }
-        .comment-meta {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .comment-form {
-            margin-top: 20px;
-        }
-        .comment-form input,
-        .comment-form textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            font-family: monospace;
-        }
-        .comment-form textarea {
-            min-height: 100px;
-        }
-        .comment-form button {
-            padding: 8px 16px;
-            cursor: pointer;
-        }
-        a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <a href="{% url 'weblog:article_inventory' %}">&larr; back to weblog</a>
-    
-    <h1>{{ article.title }}</h1>
-    <div class="article-meta">
-        {{ article.published_at|date:"F d, Y" }} • {{ article.get_reading_time }} min read
-    </div>
-    
-    <div class="article-body">
-        {{ article.get_body_html|safe }}
-    </div>
-    
-    <div class="comments">
-        <h2>comments ({{ comments.count }})</h2>
+{% extends "pages/base.html" %}
+{% load static %}
+
+{% block title %}{{ article.title }} | weblog{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'weblog/css/article_page.css' %}" />
+{% endblock %}
+
+{% block left_column %}
+<!-- Article Widget -->
+<div class="widget">
+    <div class="widget-container">
+        <div class="widget-title">ARTICLE</div>
+        <div class="widget-bar"></div>
         
-        {% for comment in comments %}
-            <div class="comment">
-                <div class="comment-meta">
-                    {{ comment.nickname }} • {{ comment.created_at|date:"F d, Y H:i" }}
-                </div>
-                <div>{{ comment.body }}</div>
+        <div class="article-header">
+            <h1 class="article-title-main">{{ article.title }}</h1>
+            <div class="article-meta-main">
+                <span>{{ article.published_at|date:"F j, Y" }}</span>
+                <span class="meta-separator">|</span>
+                <span>{{ article.get_word_count }} words</span>
+                <span class="meta-separator">|</span>
+                <span>{{ article.get_reading_time }} minute{{ article.get_reading_time|pluralize }}</span>
             </div>
-        {% empty %}
-            <p>no comments yet</p>
-        {% endfor %}
+        </div>
         
-        <div class="comment-form">
-            <h3>add a comment</h3>
-            <form method="post">
-                {% csrf_token %}
-                <input type="text" name="nickname" placeholder="nickname" required maxlength="64">
-                <textarea name="body" placeholder="your comment" required></textarea>
-                <button type="submit">post comment</button>
-            </form>
+        <div class="article-body">
+            {{ article.get_body_html|safe }}
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<!-- Comments Widget -->
+<div class="widget">
+    <div class="widget-container">
+        <div class="comments-header">
+            <div class="widget-title">COMMENT SECTION</div>
+            <div class="comments-count">({{ comments.count }})</div>
+        </div>
+        <div class="widget-bar"></div>
+        
+        {% if comments %}
+        <div class="comments-list" id="comments-list">
+                {% for comment in comments %}
+                <div class="comment-item">
+                    <div class="comment-time">[ {{ comment.created_at|date:"j M. Y | H:i" }} ]</div>
+                    <div class="comment-content">
+                        <span class="comment-author">{{ comment.nickname }} :</span>
+                        <span class="comment-text">{{ comment.body }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+        </div>
+        {% endif %}
+        
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="comment-input-container">
+                <textarea 
+                    class="comment-input" 
+                    name="body"
+                    placeholder="Leave your based take..." 
+                    id="comment-input"
+                    required
+                    maxlength="1000"></textarea>
+                <div class="comment-bottom">
+                    <input 
+                        type="text" 
+                        class="comment-nickname-input" 
+                        name="nickname"
+                        placeholder="Nickname (anonymous by default)" 
+                        id="comment-nickname-input"
+                        maxlength="64">
+                    <button type="submit" class="comment-button" id="comment-button">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
