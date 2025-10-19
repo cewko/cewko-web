@@ -1,8 +1,38 @@
+{% load static %}
+
 {% if track %}
-    <div>
-        <div>{{ track.artist }}</div>
-        <div>{{ track.name }}</div>
+  {% if track.cover_url and "2a96cbd8b46e442fc41c2b86b821562f.png" not in track.cover_url %}
+    <img
+      src="{{ track.cover_url }}"
+      alt="{{ track.name }} cover"
+      class="recent-image"
+    />
+  {% else %}
+    <div class="png-container">
+      <img
+        src="{% static 'pages/images/song-default.png' %}"
+        alt="{{ track.name }} cover"
+        class="recent-image"
+      />
     </div>
+  {% endif %}
+
+  <div class="recent-text">
+    <a class="recent-link" href="{{ track.url }}" target="_blank">
+      <div class="recent-author">{{ track.artist }} · {{ track.time_ago }}</div>
+    </a>
+    <div class="recent-description">{{ track.name }}</div>
+  </div>
 {% else %}
-    <div>No recent songs</div>
+  <div class="png-container">
+    <img
+      src="{% static 'pages/images/song-default.png' %}"
+      alt="song cover"
+      class="recent-image"
+    />
+  </div>
+  <div class="recent-text">
+    <div class="recent-author">placeholder message</div>
+    <div class="recent-description">either broken or the page has to be refreshed</div>
+  </div>
 {% endif %}

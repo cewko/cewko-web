@@ -1,17 +1,32 @@
+{% load static %}
+
 {% if status %}
-    <div style="display: flex; gap: 10px;">
-        <img src="{{ status.avatar }}" alt="{{ status.username }}" style="width: 64px; height: 64px; border-radius: 4px;">
-        <div style="flex: 1;">
-            <div>
-                <span>{{ status.username }}</span>
-                <span>•</span>
-                <span>{{ status.created_at }}</span>
-            </div>
-            <a href="{{ status.url }}" target="_blank" rel="noopener">
-                <div>{{ status.content }}</div>
-            </a>
-        </div>
+<img
+  src="{{ status.avatar }}"
+  alt="{{ status.username }}"
+  class="recent-image"
+/>
+
+<div class="recent-text">
+  <a class="recent-link" href="{{ status.url }}" target="_blank">
+    <div class="recent-author">
+      {{ status.username }} · {{ status.created_at }}
     </div>
+  </a>
+  <div class="recent-description">{{ status.content }}</div>
+</div>
 {% else %}
-    <div>No recent status</div>
+<div class="png-container">
+  <img
+    src="{% static 'pages/images/song-default.png' %}"
+    alt="{{ status.username }}"
+    class="recent-image"
+  />
+</div>
+<div class="recent-text">
+  <div class="recent-author">placeholder message</div>
+  <div class="recent-description">
+    either broken or the page has to be refreshed
+  </div>
+</div>
 {% endif %}

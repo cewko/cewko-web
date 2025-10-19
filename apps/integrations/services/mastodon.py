@@ -1,7 +1,7 @@
 import re
 import html
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 from decouple import config
 from django.utils.html import strip_tags
 from .base import BaseIntegrationService
@@ -97,8 +97,8 @@ class MastodonService(BaseIntegrationService):
 
             return {
                 'content': content,
-                'url': account_data["url"],
-                'created_at': created_at,
+                'url': status.get("url", f"https://{self.username}/@{self.username}"),
+                'created_at': self._format_time_ago(created_at),
                 'username': account_data['username'],
                 'avatar': account_data['avatar'],
             }
@@ -109,3 +109,26 @@ class MastodonService(BaseIntegrationService):
             return None
         except (KeyError, ValueError, TypeError) as e:
             return None
+
+    @staticmethod
+    def _format_time_ago(created_at):
+        now = datetime.now(timezone.utc)
+        diff = now - created_at
+        seconds = diff.total_seconds()
+
+        if seconds < 60:
+            return "playing now"
+        minutes = int(seconds / 60)
+        if minutes < 60:
+            return f"{minutes} minute{'s' if minutes != 1 else ''} ago"
+        hours = int(minutes / 60)
+        if hours < 24:
+            return f"{hours} hour{'s' if hours != 1 else ''} ago"
+        days = int(hours / 24)
+        if days < 30:
+            return f"{days} day{'s' if days != 1 else ''} ago"
+        months = int(days / 30)
+        if months < 12:
+            return f"{months} month{'s' if months != 1 else ''} ago"
+        years = int(months / 12)
+        return f"{years} year{'s' if years != 1 else ''} ago"
