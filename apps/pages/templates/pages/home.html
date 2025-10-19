@@ -124,6 +124,24 @@
 </div>
 {% endblock %}
 
+{% block bottom_grid %}
+<div class="bottom-grid">
+    <div class="left-bottom-column">
+        <div class="widget">
+            <div class="widget-container">
+                <div class="widget-title">
+                    <a href="https://github.com/cewko" class="widget-title-link" target="_blank">
+                        <span class="widget-title-text">CONTRIBUTIONS</span>
+                    </a>
+                </div>
+                <div class="widget-bar"></div>
+                {% github_widget %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
 {% block extra_js %}
 <script src="{% static 'pages/js/home.js' %}"></script>
 {% endblock %}

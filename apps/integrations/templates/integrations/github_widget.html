@@ -1,9 +1,92 @@
 {% if github %}
-    <div>
-        <div>Total contributions: {{ github.total_contributions }}</div>
-        <div>Current streak: {{ github.current_streak }} days</div>
-        <div>Longest streak: {{ github.longest_streak }} days</div>
+<div class="calendar-container">
+    <div class="calendar-stats">
+        <span id="total-contributions">[ {{ github.total_contributions }} contributions ]</span>
+        <span id="streak-info">[ {{ github.current_streak }} current | {{ github.longest_streak }} longest streak ]</span>
     </div>
-{% else %}
-    <div>Github data unavailable</div>
+    <div class="calendar-wrapper">
+        <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
+    <div class="tooltip" id="tooltip"></div>
+</div>
+
+<script>
+(function() {
+    const githubData = {{ github.weeks|safe }};
+    
+    function getContributionLevel(count) {
+        if (count === 0) return 0;
+        if (count <= 3) return 1;
+        if (count <= 6) return 2;
+        if (count <= 9) return 3;
+        return 4;
+    }
+    
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    }
+    
+    function initCalendar() {
+        const grid = document.getElementById('calendar-grid');
+        const tooltip = document.getElementById('tooltip');
+        
+        if (!grid || !tooltip) return;
+        
+        const days = [];
+        githubData.forEach(week => {
+            week.forEach(day => {
+                days.push(day);
+            });
+        });
+        
+        const wrapper = grid.parentElement;
+        const wrapperWidth = wrapper.clientWidth;
+        const BOX_SIZE = 15;
+        const GAP_SIZE = 3;
+        const weekWidth = BOX_SIZE + GAP_SIZE;
+        const weeksToShow = Math.floor(wrapperWidth / weekWidth);
+        const daysToShow = weeksToShow * 7;
+        
+        const displayDays = days.slice(-daysToShow);
+        
+        displayDays.forEach(day => {
+            const cell = document.createElement('div');
+            cell.className = 'contribution-day';
+            const level = getContributionLevel(day.count);
+            if (level > 0) {
+                cell.classList.add(`level-${level}`);
+            }
+            
+            cell.addEventListener('mouseenter', (e) => {
+                const contributionText = day.count === 1 ? 'contribution' : 'contributions';
+                tooltip.textContent = `${formatDate(day.date)}: ${day.count} ${contributionText}`;
+                tooltip.classList.add('show');
+                
+                const rect = cell.getBoundingClientRect();
+                const containerRect = grid.getBoundingClientRect();
+                tooltip.style.left = (rect.left - containerRect.left + rect.width / 2) + 'px';
+                tooltip.style.top = (rect.top - containerRect.top - 35) + 'px';
+                tooltip.style.transform = 'translateX(-50%)';
+            });
+            
+            cell.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('show');
+            });
+            
+            grid.appendChild(cell);
+        });
+    }
+    
+    initCalendar();
+    window.addEventListener('resize', () => {
+        const grid = document.getElementById('calendar-grid');
+        if (grid) {
+            grid.innerHTML = '';
+            initCalendar();
+        }
+    });
+})();
+</script>
 {% endif %}

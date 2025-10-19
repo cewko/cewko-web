@@ -266,3 +266,101 @@
   font-size: 1rem;
   color: var(--color-secondary);
 }
+
+/* Bottom Grid Section */
+.bottom-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.left-bottom-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.right-bottom-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Contributions Widget */
+.calendar-container {
+  border: 3px solid var(--color-secondary);
+  padding: 15px;
+  padding-top: 10px;
+  position: relative;
+}
+
+.calendar-stats {
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 13px;
+  color: var(--color-primary);
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.calendar-wrapper {
+  padding: 2px;
+  overflow: hidden;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  grid-auto-flow: column;
+  gap: 3px;
+}
+
+.contribution-day {
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--color-primary);
+  background: var(--color-background);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.contribution-day:hover {
+  transform: scale(1.2);
+}
+
+.contribution-day.level-1 {
+  background: #d4b5b3;
+}
+
+.contribution-day.level-2 {
+  background: var(--color-secondary);
+}
+
+.contribution-day.level-3 {
+  background: #865b5a;
+}
+
+.contribution-day.level-4 {
+  background: var(--color-primary);
+}
+
+.tooltip {
+  position: absolute;
+  background: var(--color-primary);
+  color: var(--color-background);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.tooltip.show {
+  opacity: 1;
+}
