@@ -1,110 +1,75 @@
+{% load static %} {% load integration_tags %}
+
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}cewko{% endblock %}</title>
-    <style>
-        #preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.3s ease-out;
-        }
 
-        #preloader.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
+    <link rel="stylesheet" href="{% static 'pages/css/base.css' %}" />
 
-        .preloader-content {
-            text-align: center;
-            font-family: monospace;
-        }
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="left-column">{% block left_column %} {% endblock %}</div>
 
-        .preloader-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #333;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
+      <div class="right-column">
+        {% block right_column %}
 
-        .preloader-text {
-            color: #333;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        body { font-family: monospace; max-width: 900px; margin: 0 auto; padding: 20px; }
-        a { color: blue; }
-        nav { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ccc; }
-        nav a { margin-right: 15px; }
-        .section { margin-bottom: 30px; }
-        
-        .page-content {
-            opacity: 0;
-            transition: opacity 0.5s ease-in;
-        }
-        
-        .page-content.visible {
-            opacity: 1;
-        }
-    </style>
-</head>
-<body>
-    <div id="preloader">
-        <div class="preloader-content">
-            <div class="preloader-spinner"></div>
-            <div class="preloader-text">loading...</div>
+        <div class="widget">
+          <div class="widget-container">
+            <div class="widget-title">NAVIGATION</div>
+            <div class="widget-bar"></div>
+            <div class="widget-links">
+              <a href="#" class="widget-link">Home</a>
+              <a href="#" class="widget-link">About me</a>
+              <a href="#" class="widget-link">WebLog</a>
+            </div>
+          </div>
         </div>
+
+        <div class="widget">
+          <div class="widget-container">
+            <div class="widget-title">CONTACT</div>
+            <div class="widget-bar"></div>
+            <div class="widget-links">
+              <a href="#" class="widget-link">GitHub</a>
+              <a href="#" class="widget-link">Soundcloud</a>
+              <div class="link-row">
+                <a href="#" class="widget-link">Discord</a>
+                {% discord_status_widget %}
+              </div>
+              <a href="#" class="widget-link">Mastodon</a>
+              <a href="#" class="widget-link">Telegram</a>
+              <a href="#" class="widget-link">Steam</a>
+              <a href="#" class="widget-link">Donations</a>
+            </div>
+          </div>
+        </div>
+
+        {% block right_column_extra %} {% endblock %} {% endblock %}
+      </div>
+
+      {% block bottom_grid %} {% endblock %}
     </div>
 
-    <div class="page-content" id="page-content">
-        <nav>
-            <a href="{% url 'pages:home' %}">home</a>
-            <a href="{% url 'pages:about' %}">about</a>
-            <a href="{% url 'weblog:article_inventory' %}">weblog</a>
-            <a href="#">github</a>
-            <a href="#">soundcloud</a>
-            <a href="#">discord</a>
-            <a href="#">telegram</a>
-            <a href="#">mastodon</a>
-            <a href="#">twitter</a>
-            <a href="#">steam</a>
-            <a href="#donations">donations</a>
-        </nav>
-        
-        {% block content %}{% endblock %}
+    {% block credits %}
+    <div class="credits">
+      <div class="credits-row">
+        <span class="credits-label">milk-chan by demiiurge</span>
+      </div>
+      <div class="credits-row">
+        <span class="credits-label">background by</span>
+        <a
+          href="https://motocross-arts.tumblr.com/"
+          class="credits-link"
+          target="_blank"
+          >motocross
+        </a>
+      </div>
     </div>
-
-    <script>
-        window.addEventListener('load', function() {
-            const preloader = document.getElementById('preloader');
-            const content = document.getElementById('page-content');
-            
-            setTimeout(function() {
-                preloader.classList.add('fade-out');
-                content.classList.add('visible');
-                
-                setTimeout(function() {
-                    preloader.style.display = 'none';
-                }, 300);
-            }, 200);
-        });
-    </script>
-</body>
+    {% endblock %} {% block extra_js %}{% endblock %}
+  </body>
 </html>
