@@ -35,3 +35,5 @@ urlpatterns = [
         "sitemaps": sitemaps
         }, name="django.contrib.sitemaps.views.sitemap")
 ] + debug_toolbar_urls()
+
+handler404 = "apps.pages.views.custom_404"

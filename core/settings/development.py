@@ -37,9 +37,6 @@ REDIS_URL = config('REDIS_URL', default='redis://localhost:6379/0')
 # Development-specific settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# Show detailed error pages
-DEBUG = True
-
 # Allow all internal IPs for debug toolbar (if you add it later)
 INTERNAL_IPS = [
     "127.0.0.1",

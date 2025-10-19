@@ -306,3 +306,40 @@ body::before {
     display: block;
   }
 }
+
+/* 404 Error Widget */
+.error-widget {
+  background: var(--color-background);
+  border: 3px solid var(--color-primary);
+  padding: 0.9375rem 1.25rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.error-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  padding: 3rem 2rem;
+}
+
+.error-message {
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 1.5rem;
+  color: var(--color-secondary);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.error-description {
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 600px;
+}

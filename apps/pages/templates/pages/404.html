@@ -1,0 +1,21 @@
+{% extends "pages/base.html" %}
+{% load static %}
+
+{% block title %}page not found{% endblock %}
+
+{% block left_column %}
+<div class="error-widget">
+    <div class="widget-container">
+        <div class="widget-title">
+            <span class="widget-title-text">PAGE NOT FOUND</span>
+        </div>
+        <div class="widget-bar"></div>
+    </div>
+    <div class="error-content">
+        <div class="error-message">what you seek cannot be found</div>
+        <div class="error-description">
+            the page you're looking for might have been removed or is temporarily unavailable.
+        </div>
+    </div>
+</div>
+{% endblock %}
