@@ -1,11 +1,87 @@
 {% extends "pages/base.html" %}
 {% load static %}
 {% load integration_tags %}
+{% load analytics_tags %}
 {% load weblog_tags %}
 
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'pages/css/home.css' %}" />
+<style>
+/* stats row for wakatime + visitors for debugging */
+.stats-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+}
+
+/* WakaTime Stats */
+.wakatime-stats {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+
+.stat-column {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.stat-column:last-child {
+  padding-top: 10px !important;
+}
+
+.stat-label {
+  font-family: "Ari-W9500 Display", monospace !important;
+  font-size: 20px !important;
+  color: var(--color-primary) !important;
+  white-space: nowrap !important;
+}
+
+.stat-value {
+  font-family: "Ari-W9500 Display", monospace !important;
+  font-size: 16px !important;
+  color: var(--color-secondary) !important;
+}
+
+/* Visitors Widget */
+.visitors-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.visitors-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.visitors-label {
+  font-family: "Ari-W9500 Display", monospace !important;
+  font-size: 20px !important;
+  color: var(--color-primary) !important;
+}
+
+.visitors-value {
+  font-family: "Ari-W9500 Display", monospace !important;
+  font-size: 16px !important;
+  color: var(--color-secondary) !important;
+}
+
+.visitor-digit {
+  color: var(--color-secondary) !important;
+}
+
+.visitor-digit.non-zero {
+  color: var(--color-primary) !important;
+}
+
+.visitor-dot {
+  color: var(--color-secondary) !important;
+}
+</style>
 {% endblock %} 
 
 {% block left_column %}
@@ -141,74 +217,101 @@
         </div>
     </div>
     <div class="right-bottom-column">
-    <!-- Weblog Widget -->
-    <div class="widget">
-        <div class="widget-container">
-            <div class="weblog-header">
-                <div class="widget-title">
-                    <a href="{% url 'weblog:article_inventory' %}" class="widget-title-link">
-                        <span class="widget-title-text">WEBLOG</span>
-                    </a>
+        <!-- Weblog Widget -->
+        <div class="widget">
+            <div class="widget-container">
+                <div class="weblog-header">
+                    <div class="widget-title">
+                        <a href="{% url 'weblog:article_inventory' %}" class="widget-title-link">
+                            <span class="widget-title-text">WEBLOG</span>
+                        </a>
+                    </div>
+                    <div class="weblog-rss">
+                        <a href="{% url 'weblog:rss_feed' %}" class="widget-title-link">
+                            <span class="bracket-up">[</span><span class="widget-title-text">RSS</span><span class="bracket-up">]</span>
+                        </a>
+                    </div>
                 </div>
-                <div class="weblog-rss">
-                    <a href="{% url 'weblog:rss_feed' %}" class="widget-title-link">
-                        <span class="bracket-up">[</span><span class="widget-title-text">RSS</span><span class="bracket-up">]</span>
-                    </a>
-                </div>
+                <div class="widget-bar"></div>
+                {% recent_articles_widget limit=3 %}
             </div>
-            <div class="widget-bar"></div>
-            {% recent_articles_widget limit=3 %}
         </div>
-    </div>
-    <!-- Craft Widget -->
-    <div class="widget">
-        <div class="widget-container">
-            <div class="widget-drag-handle">
-                <div class="widget-title">CRAFT</div>
+        
+        <!-- Craft Widget -->
+        <div class="widget">
+            <div class="widget-container">
+                <div class="widget-drag-handle">
+                    <div class="widget-title">CRAFT</div>
+                </div>
+                <div class="widget-bar"></div>
+                <div class="craft-projects">
+                    <div class="project-item">
+                        <a href="#" class="project-link" target="_blank">
+                            <div class="project-name">
+                                <span class="project-arrow">*</span>
+                                <span class="project-text">minecraft-voice-communication</span>
+                            </div>
+                        </a>
+                        <div class="project-description">windows application to enable voice communication for minecraft using faster-whisper 
+                            <span class="project-tech">[ python : tkinter : faster-whisper : pywin32 ]</span></div>
+                    </div>
+                    <div class="project-item">
+                        <a href="#" class="project-link" target="_blank">
+                            <div class="project-name">
+                                <span class="project-arrow">*</span>
+                                <span class="project-text">extension-organizer</span>
+                            </div>
+                        </a>
+                        <div class="project-description">organize files by moving them into categorized folders based on their extensions 
+                            <span class="project-tech">[ bash : coreutils ]</span></div>
+                    </div>                            
+                    <div class="project-item">
+                        <a href="#" class="project-link" target="_blank">
+                            <div class="project-name">
+                                <span class="project-arrow">*</span>
+                                <span class="project-text">color-picker</span>
+                            </div>
+                        </a>
+                        <div class="project-description">select color, copy to clipboard, and get desktop notification 
+                            <span class="project-tech">[ bash : gpick : xclip : libnotify ]</span></div>
+                    </div>
+                    <div class="project-more">
+                        other work :
+                        <a href="#" class="project-more-link" target="_blank">
+                            <span class="project-more-text">sprout-lands</span>
+                        </a><span class="project-tech">[ pygame ]</span> :
+                        <a href="#" class="project-more-link" target="_blank">
+                            <span class="project-more-text">pong <span class="project-tech"> [ love2d ]</span></span>
+                        </a> :
+                        <a href="#" class="project-more-link" target="_blank">
+                            <span class="project-more-text">video-summarizer </span>
+                        </a><span class="project-tech">[ gemini : youtube-dlp : feedparser ]</span>
+                    </div>
+                </div>
             </div>
-            <div class="widget-bar"></div>
-            <div class="craft-projects">
-                <div class="project-item">
-                    <a href="#" class="project-link" target="_blank">
-                        <div class="project-name">
-                            <span class="project-arrow">*</span>
-                            <span class="project-text">minecraft-voice-communication</span>
-                        </div>
-                    </a>
-                    <div class="project-description">windows application to enable voice communication for minecraft using faster-whisper 
-                        <span class="project-tech">[ python : tkinter : faster-whisper : pywin32 ]</span></div>
+        </div>
+        
+        <!-- Stats Row: WakaTime + Visitors -->
+        <div class="stats-row">
+            <!-- WakaTime Widget -->
+            <div class="widget">
+                <div class="widget-container">
+                    <div class="widget-title">
+                        <a href="https://wakatime.com/@cewko" class="widget-title-link" target="_blank">
+                            <span class="widget-title-text">WAKATIME</span>
+                        </a>
+                    </div>
+                    <div class="widget-bar"></div>
+                    {% wakatime_widget %}
                 </div>
-                <div class="project-item">
-                    <a href="#" class="project-link" target="_blank">
-                        <div class="project-name">
-                            <span class="project-arrow">*</span>
-                            <span class="project-text">extension-organizer</span>
-                        </div>
-                    </a>
-                    <div class="project-description">organize files by moving them into categorized folders based on their extensions 
-                        <span class="project-tech">[ bash : coreutils ]</span></div>
-                </div>                            
-                <div class="project-item">
-                    <a href="#" class="project-link" target="_blank">
-                        <div class="project-name">
-                            <span class="project-arrow">*</span>
-                            <span class="project-text">color-picker</span>
-                        </div>
-                    </a>
-                    <div class="project-description">select color, copy to clipboard, and get desktop notification 
-                        <span class="project-tech">[ bash : gpick : xclip : libnotify ]</span></div>
-                </div>
-                <div class="project-more">
-                    other work :
-                    <a href="#" class="project-more-link" target="_blank">
-                        <span class="project-more-text">sprout-lands</span>
-                    </a><span class="project-tech">[ pygame ]</span> :
-                    <a href="#" class="project-more-link" target="_blank">
-                        <span class="project-more-text">pong <span class="project-tech"> [ love2d ]</span></span>
-                    </a> :
-                    <a href="#" class="project-more-link" target="_blank">
-                        <span class="project-more-text">video-summarizer </span>
-                    </a><span class="project-tech">[ gemini : youtube-dlp : feedparser ]</span>
+            </div>
+
+            <!-- Visitors Widget -->
+            <div class="widget">
+                <div class="widget-container">
+                    <div class="widget-title">VISITORS</div>
+                    <div class="widget-bar"></div>
+                    {% visitors_widget %}
                 </div>
             </div>
         </div>

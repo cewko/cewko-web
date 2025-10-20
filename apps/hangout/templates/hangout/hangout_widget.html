@@ -1,177 +1,220 @@
-<div id="hangout-widget" style="border: 1px solid #ccc; padding: 10px;">
-    <div style="margin-bottom: 10px; font-size: 0.9em;">
-        <input type="checkbox" id="hangout-sound-enabled" checked />
-        <label for="hangout-sound-enabled">
-            <span id="hangout-sound-label">notifications on</span>
-        </label>
-    </div>
-    
-    <div id="hangout-messages" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; font-size: 0.9em;"></div>
-    
-    <div id="hangout-error" style="display: none; color: red; margin-bottom: 10px; font-size: 0.9em;"></div>
-    
-    <div style="display: flex; gap: 5px;">
-        <input type="text" id="hangout-nickname" placeholder="nickname" value="anonymous" style="width: 120px; padding: 5px; font-family: monospace;">
-        <input type="text" id="hangout-message" placeholder="message" style="flex: 1; padding: 5px; font-family: monospace;">
-        <button onclick="hangoutSend()" style="padding: 5px 10px; cursor: pointer;">send</button>
-    </div>
+<div id="hangout-widget" style="border: 1px solid #ccc; padding: 10px">
+  <div style="margin-bottom: 10px; font-size: 0.9em">
+    <input type="checkbox" id="hangout-sound-enabled" checked />
+    <label for="hangout-sound-enabled">
+      <span id="hangout-sound-label">notifications on</span>
+    </label>
+  </div>
+
+  <div
+    id="hangout-messages"
+    style="
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+    "
+  ></div>
+
+  <div
+    id="hangout-error"
+    style="display: none; color: red; margin-bottom: 10px; font-size: 0.9em"
+  ></div>
+
+  <div style="display: flex; gap: 5px">
+    <input
+      type="text"
+      id="hangout-nickname"
+      placeholder="nickname"
+      value="anonymous"
+      style="width: 120px; padding: 5px; font-family: monospace"
+    />
+    <input
+      type="text"
+      id="hangout-message"
+      placeholder="message"
+      style="flex: 1; padding: 5px; font-family: monospace"
+    />
+    <button onclick="hangoutSend()" style="padding: 5px 10px; cursor: pointer">
+      send
+    </button>
+  </div>
 </div>
 
 <script>
-(function() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  (function () {
+    const audioContext = new (window.AudioContext ||
+      window.webkitAudioContext)();
     let soundEnabled = true;
     let hasInteracted = false;
-    
+
     function playNotificationSound() {
-        if (!soundEnabled || !hasInteracted) return;
-        
-        try {
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.1);
-            
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.2);
-        } catch (e) {
-            console.error('Failed to play sound:', e);
-        }
+      if (!soundEnabled || !hasInteracted) return;
+
+      try {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(
+          600,
+          audioContext.currentTime + 0.1
+        );
+
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          audioContext.currentTime + 0.2
+        );
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+      } catch (e) {
+        console.error("Failed to play sound:", e);
+      }
     }
-    
-    const soundCheckbox = document.getElementById('hangout-sound-enabled');
-    const soundLabel = document.getElementById('hangout-sound-label');
-    
-    soundCheckbox.addEventListener('change', (e) => {
-        soundEnabled = e.target.checked;
-        soundLabel.textContent = soundEnabled ? 'notifications on' : 'notifications off';
-        localStorage.setItem('hangout-sound-enabled', soundEnabled);
+
+    const soundCheckbox = document.getElementById("hangout-sound-enabled");
+    const soundLabel = document.getElementById("hangout-sound-label");
+
+    soundCheckbox.addEventListener("change", (e) => {
+      soundEnabled = e.target.checked;
+      soundLabel.textContent = soundEnabled
+        ? "notifications on"
+        : "notifications off";
+      localStorage.setItem("hangout-sound-enabled", soundEnabled);
     });
-    
-    const savedPref = localStorage.getItem('hangout-sound-enabled');
+
+    const savedPref = localStorage.getItem("hangout-sound-enabled");
     if (savedPref !== null) {
-        soundEnabled = savedPref === 'true';
-        soundCheckbox.checked = soundEnabled;
-        soundLabel.textContent = soundEnabled ? 'notifications on' : 'notifications off';
+      soundEnabled = savedPref === "true";
+      soundCheckbox.checked = soundEnabled;
+      soundLabel.textContent = soundEnabled
+        ? "notifications on"
+        : "notifications off";
     }
-    
-    document.addEventListener('click', () => {
+
+    document.addEventListener(
+      "click",
+      () => {
         hasInteracted = true;
-        if (audioContext.state === 'suspended') {
-            audioContext.resume();
+        if (audioContext.state === "suspended") {
+          audioContext.resume();
         }
-    }, { once: true });
+      },
+      { once: true }
+    );
 
     const ws = new WebSocket(
-        (location.protocol === "https:" ? "wss://" : "ws://") +
+      (location.protocol === "https:" ? "wss://" : "ws://") +
         location.host +
         "/ws/hangout/"
     );
-    
+
     const msgs = document.getElementById("hangout-messages");
     const msgInput = document.getElementById("hangout-message");
     const nickInput = document.getElementById("hangout-nickname");
     const errorDiv = document.getElementById("hangout-error");
-    
+
     let isInitialLoad = true;
 
     function displayMessage(data, skipSound = false) {
-        const div = document.createElement("div");
-        div.style.marginBottom = "5px";
+      const div = document.createElement("div");
+      div.style.marginBottom = "5px";
 
-        const nickSpan = document.createElement("span");
-        nickSpan.style.fontWeight = "bold";
-        nickSpan.textContent = data.nickname;
+      const nickSpan = document.createElement("span");
+      nickSpan.style.fontWeight = "bold";
+      nickSpan.textContent = data.nickname;
 
-        div.appendChild(nickSpan);
+      div.appendChild(nickSpan);
 
-        if (data.is_highlighted) {
-            div.appendChild(document.createTextNode(" ⭐"));
-        }
+      if (data.is_highlighted) {
+        div.appendChild(document.createTextNode(" ⭐"));
+      }
 
-        if (data.from_discord) {
-            div.appendChild(document.createTextNode(" [discord]"));
-        }
+      if (data.from_discord) {
+        div.appendChild(document.createTextNode(" [discord]"));
+      }
 
-        div.appendChild(document.createTextNode(": " + data.content));
+      div.appendChild(document.createTextNode(": " + data.content));
 
-        msgs.appendChild(div);
-        msgs.scrollTop = msgs.scrollHeight;
-        
-        if (!skipSound && !isInitialLoad) {
-            playNotificationSound();
-        }
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      if (!skipSound && !isInitialLoad) {
+        playNotificationSound();
+      }
     }
 
     function showError(message) {
-        errorDiv.textContent = message;
-        errorDiv.style.display = "block";
-        setTimeout(() => {
-            errorDiv.style.display = "none";
-        }, 3000);
+      errorDiv.textContent = message;
+      errorDiv.style.display = "block";
+      setTimeout(() => {
+        errorDiv.style.display = "none";
+      }, 3000);
     }
 
     ws.onmessage = (e) => {
-        const data = JSON.parse(e.data);
-        
-        if (data.type === "message") {
-            displayMessage(data);
-        } else if (data.type === "system") {
-            if (data.message === "connected to hangout") {
-                setTimeout(() => {
-                    isInitialLoad = false;
-                }, 100);
-            }
-        } else if (data.type === "error") {
-            showError(data.message);
-        } else if (data.type === "online_count") {
-            // Update analytics widget with online count
-            const onlineElement = document.getElementById('online-now');
-            if (onlineElement) {
-                onlineElement.textContent = data.count;
-            }
+      const data = JSON.parse(e.data);
+
+      if (data.type === "message") {
+        displayMessage(data);
+      } else if (data.type === "system") {
+        if (data.message === "connected to hangout") {
+          setTimeout(() => {
+            isInitialLoad = false;
+          }, 100);
         }
+      } else if (data.type === "error") {
+        showError(data.message);
+      } else if (data.type === "online_count") {
+        // Update analytics widget with online count
+        const onlineElement = document.getElementById("online-now");
+        if (onlineElement) {
+          onlineElement.textContent = data.count;
+        }
+      }
     };
 
     // Add heartbeat sender (every 25 seconds)
     setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({
-                type: 'heartbeat'
-            }));
-        }
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(
+          JSON.stringify({
+            type: "heartbeat",
+          })
+        );
+      }
     }, 25000);
-    
+
     ws.onerror = () => {
-        showError("connection error");
-    };
-    
-    ws.onclose = () => {
-        showError("connection closed");
+      showError("connection error");
     };
 
-    window.hangoutSend = function() {
-        if (msgInput.value.trim()) {
-            ws.send(
-                JSON.stringify({
-                    type: "message",
-                    nickname: nickInput.value || "anonymous",
-                    content: msgInput.value,
-                })
-            );
-            msgInput.value = "";
-        }
+    ws.onclose = () => {
+      showError("connection closed");
+    };
+
+    window.hangoutSend = function () {
+      if (msgInput.value.trim()) {
+        ws.send(
+          JSON.stringify({
+            type: "message",
+            nickname: nickInput.value || "anonymous",
+            content: msgInput.value,
+          })
+        );
+        msgInput.value = "";
+      }
     };
 
     msgInput.onkeyup = (e) => {
-        if (e.key === "Enter") window.hangoutSend();
+      if (e.key === "Enter") window.hangoutSend();
     };
-})();
+  })();
 </script>

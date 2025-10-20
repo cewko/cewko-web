@@ -367,118 +367,118 @@
 
 /* Weblog Widget */
 .weblog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .weblog-rss {
-    color: var(--color-primary);
-    font-family: "Retro Pixel Thick", sans-serif;
-    font-size: 36px;
-    height: 30px;
-    display: flex;
-    align-items: center;
+  color: var(--color-primary);
+  font-family: "Retro Pixel Thick", sans-serif;
+  font-size: 36px;
+  height: 30px;
+  display: flex;
+  align-items: center;
 }
 .bracket-up {
-    display: inline-block;
-    transform: translateY(-3px);
+  display: inline-block;
+  transform: translateY(-3px);
 }
 
 .weblog-content {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 .blog-post-title {
-    font-family: "Ari-W9500 Display", monospace;
-    font-size: 20px;
-    color: var(--color-primary);
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 20px;
+  color: var(--color-primary);
 }
 .blog-post-meta {
-    font-family: "Ari-W9500 Display", monospace;
-    font-size: 16px;
-    color: var(--color-secondary);
-    text-align: right;
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 16px;
+  color: var(--color-secondary);
+  text-align: right;
 }
 .blog-post-link,
 .blog-post-link:hover,
 .blog-post-link:visited,
 .blog-post-link:active {
-    text-decoration: none;
-    color: var(--color-primary);
+  text-decoration: none;
+  color: var(--color-primary);
 }
 
 .blog-title-text {
-    display: inline;
+  display: inline;
 }
 
 .blog-title-text:hover {
-    color: var(--color-secondary);
+  color: var(--color-secondary);
 }
 
 /* Craft Widget */
 .craft-projects {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .project-item {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .project-name {
-    font-family: "Ari-W9500 Display", monospace;
-    font-size: 20px;
-    color: var(--color-primary);
-    display: inline;
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 20px;
+  color: var(--color-primary);
+  display: inline;
 }
 
 .project-arrow {
-    vertical-align: baseline;
-    position: relative;
-    font-size: 16px;
+  vertical-align: baseline;
+  position: relative;
+  font-size: 16px;
 }
 
 .project-description {
-    font-family: "Ari-W9500 Display", monospace;
-    font-size: 16px;
-    color: var(--color-primary);
-    line-height: 1.4;
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 16px;
+  color: var(--color-primary);
+  line-height: 1.4;
 }
 
 .project-more {
-    font-family: "Ari-W9500 Display", monospace;
-    font-size: 16px;
-    color: var(--color-primary);
-    line-height: 1.4;
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 16px;
+  color: var(--color-primary);
+  line-height: 1.4;
 }
 
 .project-more-link {
-    text-decoration: none;
-    color: var(--color-secondary);
-    font-family: "Ari-W9500 Display", monospace;
-    font-size: 16px;
+  text-decoration: none;
+  color: var(--color-secondary);
+  font-family: "Ari-W9500 Display", monospace;
+  font-size: 16px;
 }
 
 .project-more-text:hover {
-    color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .project-link {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .project-text {
-    display: inline;
+  display: inline;
 }
 
 .project-text:hover {
-    color: var(--color-secondary);
+  color: var(--color-secondary);
 }
 
 .project-tech {
-    color: var(--color-secondary);
+  color: var(--color-secondary);
 }

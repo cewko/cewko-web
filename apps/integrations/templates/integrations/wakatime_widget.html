@@ -1,8 +1,12 @@
 {% if stats %}
-    <div>
-        <div>Lifetime: {{ stats.total_hours }} hour{{ stats.total_hours|pluralize }} {{ stats.total_minutes }} minute{{ stats.total_minutes|pluralize }}</div>
-        <div>Average: {{ stats.daily_hours }} hour{{ stats.daily_hours|pluralize }} {{ stats.daily_minutes }} minute{{ stats.daily_minutes|pluralize }}</div>
+<div class="wakatime-stats">
+    <div class="stat-column">
+        <div class="stat-label">all-time (aug. 2025)</div>
+        <div class="stat-value">: {{ stats.total_hours }} hours {{ stats.total_minutes }} minutes</div>
     </div>
-{% else %}
-    <div>Wakatime data unavailable</div>
+    <div class="stat-column">
+        <div class="stat-label">average session</div>
+        <div class="stat-value">: {{ stats.daily_hours }} hours {{ stats.daily_minutes }} minutes</div>
+    </div>
+</div>
 {% endif %}
