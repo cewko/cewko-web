@@ -1,59 +1,40 @@
-<div id="hangout-widget" style="border: 1px solid #ccc; padding: 10px">
-  <div style="margin-bottom: 10px; font-size: 0.9em; display: flex; justify-content: space-between; align-items: center;">
-    <div>
-      <input type="checkbox" id="hangout-sound-enabled" checked />
-      <label for="hangout-sound-enabled">
-        <span id="hangout-sound-label">notifications on</span>
-      </label>
-    </div>
-    <div style="color: #5e3536; font-family: 'Ari-W9500 Display', monospace;">
-      online: <span id="online-now">0</span>
-    </div>
-  </div>
+<div class="hangout-header">
+  <div class="widget-title">HANGOUT</div>
+  <div class="online-count">({{ online_count }} online)</div>
+</div>
+<div class="widget-bar"></div>
 
-  <div
-    id="hangout-messages"
-    style="
-      height: 300px;
-      overflow-y: auto;
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-bottom: 10px;
-      font-size: 0.9em;
-    "
-  ></div>
+<div class="chat-messages" id="chat-messages"></div>
 
-  <div
-    id="hangout-error"
-    style="display: none; color: red; margin-bottom: 10px; font-size: 0.9em"
-  ></div>
-
-  <div style="display: flex; gap: 5px">
-    <input
-      type="text"
-      id="hangout-nickname"
-      placeholder="nickname"
-      value="anonymous"
-      style="width: 120px; padding: 5px; font-family: monospace"
-    />
-    <input
-      type="text"
-      id="hangout-message"
-      placeholder="message"
-      style="flex: 1; padding: 5px; font-family: monospace"
-    />
-    <button onclick="hangoutSend()" style="padding: 5px 10px; cursor: pointer">
-      send
-    </button>
+<div class="chat-input-container">
+  <textarea 
+    class="chat-input" 
+    placeholder="Enter your message..." 
+    id="message-input"
+    maxlength="280"></textarea>
+  <div class="chat-bottom">
+    <input 
+      type="text" 
+      class="nickname-input" 
+      placeholder="Nickname (anonymous by default)" 
+      id="nickname-input"
+      maxlength="64">
+    <button class="send-button" id="send-button">Send</button>
   </div>
 </div>
 
 <script>
   (function () {
-    const audioContext = new (window.AudioContext ||
-      window.webkitAudioContext)();
+    // Audio context for notification sounds
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     let soundEnabled = true;
     let hasInteracted = false;
+
+    // Load sound preference from localStorage
+    const savedPref = localStorage.getItem("hangout-sound-enabled");
+    if (savedPref !== null) {
+      soundEnabled = savedPref === "true";
+    }
 
     function playNotificationSound() {
       if (!soundEnabled || !hasInteracted) return;
@@ -84,26 +65,7 @@
       }
     }
 
-    const soundCheckbox = document.getElementById("hangout-sound-enabled");
-    const soundLabel = document.getElementById("hangout-sound-label");
-
-    soundCheckbox.addEventListener("change", (e) => {
-      soundEnabled = e.target.checked;
-      soundLabel.textContent = soundEnabled
-        ? "notifications on"
-        : "notifications off";
-      localStorage.setItem("hangout-sound-enabled", soundEnabled);
-    });
-
-    const savedPref = localStorage.getItem("hangout-sound-enabled");
-    if (savedPref !== null) {
-      soundEnabled = savedPref === "true";
-      soundCheckbox.checked = soundEnabled;
-      soundLabel.textContent = soundEnabled
-        ? "notifications on"
-        : "notifications off";
-    }
-
+    // Enable audio context on first user interaction
     document.addEventListener(
       "click",
       () => {
@@ -121,47 +83,87 @@
         "/ws/hangout/"
     );
 
-    const msgs = document.getElementById("hangout-messages");
-    const msgInput = document.getElementById("hangout-message");
-    const nickInput = document.getElementById("hangout-nickname");
-    const errorDiv = document.getElementById("hangout-error");
+    const messagesContainer = document.getElementById("chat-messages");
+    const messageInput = document.getElementById("message-input");
+    const nicknameInput = document.getElementById("nickname-input");
+    const sendButton = document.getElementById("send-button");
+    const onlineCountElement = document.querySelector(".online-count");
 
     let isInitialLoad = true;
 
+    function formatTimestamp(isoString) {
+      const date = new Date(isoString);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+      const timeString = date.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      });
+
+      if (messageDate.getTime() === today.getTime()) {
+        return timeString;
+      } else if (messageDate.getTime() === yesterday.getTime()) {
+        return `Yesterday | ${timeString}`;
+      } else {
+        const day = String(date.getDate()).padStart(2, '0');
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const month = monthNames[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day} ${month}. ${year} | ${timeString}`;
+      }
+    }
+
     function displayMessage(data, skipSound = false) {
-      const div = document.createElement("div");
-      div.style.marginBottom = "5px";
+      const messageDiv = document.createElement("div");
+      messageDiv.className = "chat-message";
 
-      const nickSpan = document.createElement("span");
-      nickSpan.style.fontWeight = "bold";
-      nickSpan.textContent = data.nickname;
+      const timeDiv = document.createElement("div");
+      timeDiv.className = "message-time";
+      timeDiv.textContent = `[ ${formatTimestamp(data.timestamp)} ]`;
 
-      div.appendChild(nickSpan);
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "message-content";
 
+      const authorSpan = document.createElement("div");
+      authorSpan.className = "message-author";
+      
+      let authorText = data.nickname;
       if (data.is_highlighted) {
-        div.appendChild(document.createTextNode(" ⭐"));
+        authorText += " [ ! ]";
       }
-
       if (data.from_discord) {
-        div.appendChild(document.createTextNode(" [discord]"));
+        authorText += " [ Discord ]";
       }
+      authorText += " : ";
+      authorSpan.textContent = authorText;
 
-      div.appendChild(document.createTextNode(": " + data.content));
+      const textDiv = document.createElement("div");
+      textDiv.className = "message-text";
+      textDiv.textContent = data.content;
 
-      msgs.appendChild(div);
-      msgs.scrollTop = msgs.scrollHeight;
+      contentDiv.appendChild(authorSpan);
+      contentDiv.appendChild(textDiv);
 
+      messageDiv.appendChild(timeDiv);
+      messageDiv.appendChild(contentDiv);
+
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Play notification sound for new messages (not initial load)
       if (!skipSound && !isInitialLoad) {
         playNotificationSound();
       }
     }
 
     function showError(message) {
-      errorDiv.textContent = message;
-      errorDiv.style.display = "block";
-      setTimeout(() => {
-        errorDiv.style.display = "none";
-      }, 3000);
+      console.error(message);
+      alert(message);
     }
 
     ws.onmessage = (e) => {
@@ -178,14 +180,13 @@
       } else if (data.type === "error") {
         showError(data.message);
       } else if (data.type === "online_count") {
-        const onlineElement = document.getElementById("online-now");
-        if (onlineElement) {
-          onlineElement.textContent = data.count;
+        if (onlineCountElement) {
+          onlineCountElement.textContent = `(${data.count} online)`;
         }
       }
     };
 
-    // Add heartbeat sender (every 25 seconds)
+    // Heartbeat every 25 seconds
     setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(
@@ -197,28 +198,37 @@
     }, 25000);
 
     ws.onerror = () => {
-      showError("connection error");
+      showError("Connection error");
     };
 
     ws.onclose = () => {
-      showError("connection closed");
+      showError("Connection closed");
     };
 
-    window.hangoutSend = function () {
-      if (msgInput.value.trim()) {
-        ws.send(
-          JSON.stringify({
-            type: "message",
-            nickname: nickInput.value || "anonymous",
-            content: msgInput.value,
-          })
-        );
-        msgInput.value = "";
+    function sendMessage() {
+      const content = messageInput.value.trim();
+      if (!content) return;
+
+      const nickname = nicknameInput.value.trim() || "anonymous";
+
+      ws.send(
+        JSON.stringify({
+          type: "message",
+          nickname: nickname,
+          content: content,
+        })
+      );
+
+      messageInput.value = "";
+    }
+
+    sendButton.addEventListener("click", sendMessage);
+
+    messageInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
       }
-    };
-
-    msgInput.onkeyup = (e) => {
-      if (e.key === "Enter") window.hangoutSend();
-    };
+    });
   })();
 </script>
