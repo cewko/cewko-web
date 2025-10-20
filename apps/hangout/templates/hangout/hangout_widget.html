@@ -1,9 +1,14 @@
 <div id="hangout-widget" style="border: 1px solid #ccc; padding: 10px">
-  <div style="margin-bottom: 10px; font-size: 0.9em">
-    <input type="checkbox" id="hangout-sound-enabled" checked />
-    <label for="hangout-sound-enabled">
-      <span id="hangout-sound-label">notifications on</span>
-    </label>
+  <div style="margin-bottom: 10px; font-size: 0.9em; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <input type="checkbox" id="hangout-sound-enabled" checked />
+      <label for="hangout-sound-enabled">
+        <span id="hangout-sound-label">notifications on</span>
+      </label>
+    </div>
+    <div style="color: #5e3536; font-family: 'Ari-W9500 Display', monospace;">
+      online: <span id="online-now">0</span>
+    </div>
   </div>
 
   <div
@@ -173,7 +178,6 @@
       } else if (data.type === "error") {
         showError(data.message);
       } else if (data.type === "online_count") {
-        // Update analytics widget with online count
         const onlineElement = document.getElementById("online-now");
         if (onlineElement) {
           onlineElement.textContent = data.count;

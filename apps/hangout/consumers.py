@@ -7,7 +7,7 @@ from channels.db import database_sync_to_async
 from django.utils import timezone
 from decouple import config
 from .models import Message
-from apps.analytics.online_tracker import OnlineUserTracker
+from .online_tracker import OnlineUserTracker
 
 
 class HangoutConsumer(AsyncWebsocketConsumer):
