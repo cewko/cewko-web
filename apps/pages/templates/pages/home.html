@@ -9,6 +9,23 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'pages/css/home.css' %}" />
 <style>
+.widget-drag-handle {
+    cursor: grab;
+    user-select: none;
+}
+
+.widget-drag-handle:active {
+    cursor: grabbing;
+}
+
+.widget.dragging {
+    opacity: 0.5;
+}
+
+.widget.drag-over {
+    border-color: var(--color-secondary);
+    border-width: 5px;
+}
 /* stats row for wakatime + visitors for debugging */
 .stats-row {
   display: grid !important;
@@ -332,10 +349,12 @@
     <div class="left-bottom-column">
         <div class="widget">
             <div class="widget-container">
-                <div class="widget-title">
-                    <a href="https://github.com/cewko" class="widget-title-link" target="_blank">
-                        <span class="widget-title-text">CONTRIBUTIONS</span>
-                    </a>
+                <div class="widget-drag-handle">
+                  <div class="widget-title">
+                      <a href="https://github.com/cewko" class="widget-title-link" target="_blank">
+                          <span class="widget-title-text">CONTRIBUTIONS</span>
+                      </a>
+                  </div>
                 </div>
                 <div class="widget-bar"></div>
                 {% github_widget %}
@@ -352,17 +371,19 @@
         <!-- Weblog Widget -->
         <div class="widget">
             <div class="widget-container">
-                <div class="weblog-header">
-                    <div class="widget-title">
-                        <a href="{% url 'weblog:article_inventory' %}" class="widget-title-link">
-                            <span class="widget-title-text">WEBLOG</span>
-                        </a>
-                    </div>
-                    <div class="weblog-rss">
-                        <a href="{% url 'weblog:rss_feed' %}" class="widget-title-link">
-                            <span class="bracket-up">[</span><span class="widget-title-text">RSS</span><span class="bracket-up">]</span>
-                        </a>
-                    </div>
+                <div class="widget-drag-handle">
+                  <div class="weblog-header">
+                      <div class="widget-title">
+                          <a href="{% url 'weblog:article_inventory' %}" class="widget-title-link">
+                              <span class="widget-title-text">WEBLOG</span>
+                          </a>
+                      </div>
+                      <div class="weblog-rss">
+                          <a href="{% url 'weblog:rss_feed' %}" class="widget-title-link">
+                              <span class="bracket-up">[</span><span class="widget-title-text">RSS</span><span class="bracket-up">]</span>
+                          </a>
+                      </div>
+                  </div>
                 </div>
                 <div class="widget-bar"></div>
                 {% recent_articles_widget limit=3 %}
@@ -428,11 +449,13 @@
             <!-- WakaTime Widget -->
             <div class="widget">
                 <div class="widget-container">
+                  <div class="widget-drag-handle">
                     <div class="widget-title">
                         <a href="https://wakatime.com/@cewko" class="widget-title-link" target="_blank">
                             <span class="widget-title-text">WAKATIME</span>
                         </a>
                     </div>
+                  </div>
                     <div class="widget-bar"></div>
                     {% wakatime_widget %}
                 </div>
@@ -441,7 +464,9 @@
             <!-- Visitors Widget -->
             <div class="widget">
                 <div class="widget-container">
+                  <div class="widget-drag-handle">
                     <div class="widget-title">VISITORS</div>
+                  </div>
                     <div class="widget-bar"></div>
                     {% visitors_widget %}
                 </div>
@@ -453,4 +478,73 @@
 
 {% block extra_js %}
 <script src="{% static 'pages/js/home.js' %}"></script>
+
+<script>
+function initDragAndDrop() {
+  const widgets = document.querySelectorAll(
+    ".left-bottom-column > .widget, .right-bottom-column > .widget, .right-bottom-column > .stats-row"
+  );
+
+  let draggedWidget = null;
+
+  widgets.forEach((widget) => {
+    const dragHandle = widget.querySelector(".widget-drag-handle");
+
+    if (!dragHandle) return;
+
+    const dragHandles = widget.classList.contains("stats-row")
+      ? widget.querySelectorAll(".widget-drag-handle")
+      : [dragHandle];
+
+    dragHandles.forEach((handle) => {
+      handle.addEventListener("mousedown", function (e) {
+        widget.setAttribute("draggable", "true");
+      });
+    });
+
+    widget.addEventListener("dragstart", function (e) {
+      draggedWidget = this;
+      this.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+    });
+
+    widget.addEventListener("dragend", function (e) {
+      this.classList.remove("dragging");
+      this.setAttribute("draggable", "false");
+
+      widgets.forEach((w) => w.classList.remove("drag-over"));
+    });
+
+    widget.addEventListener("dragover", function (e) {
+      e.preventDefault();
+      if (draggedWidget !== this) {
+        this.classList.add("drag-over");
+      }
+      return false;
+    });
+
+    widget.addEventListener("dragleave", function (e) {
+      this.classList.remove("drag-over");
+    });
+
+    widget.addEventListener("drop", function (e) {
+      e.stopPropagation();
+      this.classList.remove("drag-over");
+
+      if (draggedWidget !== this) {
+        const parent1 = draggedWidget.parentNode;
+        const parent2 = this.parentNode;
+        const next1 = draggedWidget.nextSibling;
+        const next2 = this.nextSibling;
+
+        parent2.insertBefore(draggedWidget, next2);
+        parent1.insertBefore(this, next1);
+      }
+
+      return false;
+    });
+  });
+}
+initDragAndDrop();
+</script>
 {% endblock %}
