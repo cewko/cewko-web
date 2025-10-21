@@ -1,9 +1,4 @@
-/**
- * Clock component for weather widget
- * Updates time display every minute
- */
-
-export function updateTime() {
+function updateTime() {
   const now = new Date();
 
   const polandTime = new Intl.DateTimeFormat("en-US", {
@@ -19,7 +14,7 @@ export function updateTime() {
   }
 }
 
-export function initClock() {
+function initClock() {
   updateTime();
   
   setInterval(updateTime, 60000);

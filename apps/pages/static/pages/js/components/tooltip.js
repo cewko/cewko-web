@@ -1,4 +1,4 @@
-export function initRecentTooltips() {
+function initRecentTooltips() {
   const recentWidgets = document.querySelectorAll(".recent-widget");
 
   recentWidgets.forEach((widget) => {
@@ -24,8 +24,9 @@ export function initRecentTooltips() {
 
       const rect = element.getBoundingClientRect();
       const containerRect = content.getBoundingClientRect();
-      
-      tooltip.style.left = rect.left - containerRect.left + rect.width / 2 + "px";
+
+      tooltip.style.left =
+        rect.left - containerRect.left + rect.width / 2 + "px";
       tooltip.style.bottom = containerRect.bottom - rect.top + 8 + "px";
       tooltip.style.transform = "translateX(-50%)";
     }

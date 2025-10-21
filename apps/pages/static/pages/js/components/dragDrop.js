@@ -1,4 +1,4 @@
-export function initDragAndDrop() {
+function initDragAndDrop() {
   const widgets = document.querySelectorAll(
     ".left-bottom-column > .widget, .right-bottom-column > .widget, .right-bottom-column > .stats-row"
   );
@@ -29,7 +29,7 @@ export function initDragAndDrop() {
     widget.addEventListener("dragend", function (e) {
       this.classList.remove("dragging");
       this.setAttribute("draggable", "false");
-      
+
       widgets.forEach((w) => w.classList.remove("drag-over"));
     });
 
