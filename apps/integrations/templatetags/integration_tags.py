@@ -16,7 +16,7 @@ def discord_status_widget():
     service = DiscordService()
     data = service.get_data()
 
-    status = "offline"
+    status = "down"
     if data:
         status = data["status"]
 

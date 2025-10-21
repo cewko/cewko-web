@@ -117,7 +117,7 @@ class MastodonService(BaseIntegrationService):
         seconds = diff.total_seconds()
 
         if seconds < 60:
-            return "playing now"
+            return "moment ago"
         minutes = int(seconds / 60)
         if minutes < 60:
             return f"{minutes} minute{'s' if minutes != 1 else ''} ago"

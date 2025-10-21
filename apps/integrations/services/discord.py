@@ -38,10 +38,7 @@ class DiscordService(BaseIntegrationService):
             return None
 
     def _normalize_status(self, status):
-        status_map = {
-            "online": "online",
-            "idle": "idle",
-            "dnd": "dnd",
-            "offline": "offline"
-        }
-        return status_map.get(status, "offline")
+        if status in ("online", "idle", "dnb"):
+            status = "online"
+
+        return status
