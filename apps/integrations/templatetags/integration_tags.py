@@ -34,9 +34,16 @@ def lastfm_widget():
 @register.inclusion_tag('integrations/weather_widget.html')
 def weather_widget():
     service = WeatherService()
-    data = service.get_data()
-    
-    return {'weather': data}
+    weather_data = service.get_data()
+
+    if not weather_data:
+        weather_data = {
+            "temperature": "--",
+            "humidity": "--",
+            "description": "The West has fallen"
+        }
+
+    return {'weather': weather_data}
 
 
 @register.inclusion_tag('integrations/wakatime_widget.html')
