@@ -108,26 +108,26 @@ CELERY_RESULT_EXPIRES = 3600
 CELERY_BEAT_SCHEDULE = {
     "refresh-discord-status": {
         "task": "apps.integrations.tasks.refresh_discord_status",
-        "schedule": 60.0,
+        "schedule": 50.0,   # cache timeout is 60s, refresh every 50s
     },
     "refresh-lastfm-track": {
         "task": "apps.integrations.tasks.refresh_lastfm_track",
-        "schedule": 5.0,
+        "schedule": 4.0,    # cache timeout is 5s, refresh every 4s
     },
     "refresh-weather-data": {
         "task": "apps.integrations.tasks.refresh_weather_data",
-        "schedule": 30.0,
+        "schedule": 20.0,   # cache timeout is 30s, refresh every 20s
     },
     "refresh-wakatime-stats": {
         "task": "apps.integrations.tasks.refresh_wakatime_stats",
-        "schedule": 60.0,
+        "schedule": 50.0,   # cache timeout is 60s, refresh every 50s
     },
     "refresh-mastodon-status": {
         "task": "apps.integrations.tasks.refresh_mastodon_status",
-        "schedule": 60.0,
+        "schedule": 50.0,   # cache timeout is 60s, refresh every 50s
     },
     "refresh-github-contributions": {
         "task": "apps.integrations.tasks.refresh_github_contributions",
-        "schedule": 60.0,
+        "schedule": 50.0,   # cache timeout is 60s, refresh every 50s
     },
 }
