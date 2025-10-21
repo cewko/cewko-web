@@ -49,9 +49,17 @@ def weather_widget():
 @register.inclusion_tag('integrations/wakatime_widget.html')
 def wakatime_widget():
     service = WakatimeService()
-    data = service.get_data()
-    
-    return {'stats': data}
+    wakatime_data = service.get_data()
+
+    if not wakatime_data:
+        wakatime_data = {
+            "total_hours": "00",
+            "total_minutes": "00",
+            "daily_hours": "00",
+            "daily_minutes": "00"
+        }
+
+    return {'stats': wakatime_data}
 
 
 @register.inclusion_tag("integrations/mastodon_widget.html")
