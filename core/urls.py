@@ -17,7 +17,6 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from debug_toolbar.toolbar import debug_toolbar_urls
 from django.contrib.sitemaps.views import sitemap
 from core.sitemaps import (
     StaticViewSitemap, 
@@ -39,4 +38,5 @@ urlpatterns = [
 handler404 = "apps.pages.views.custom_404"
 
 if settings.DEBUG:
+    from debug_toolbar.toolbar import debug_toolbar_urls
     urlpatterns += debug_toolbar_urls()
