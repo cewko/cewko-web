@@ -164,8 +164,9 @@
     }
 
     function showError(message) {
-      console.error(message);
-      alert(message);
+      console.error("Hangout error:", message);
+      // Optionally show a subtle in-widget notification instead of alert
+      // For now, just log to console
     }
 
     ws.onmessage = (e) => {
@@ -199,12 +200,12 @@
       }
     }, 25000);
 
-    ws.onerror = () => {
-      showError("Connection error");
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
     };
 
-    ws.onclose = () => {
-      showError("Connection closed");
+    ws.onclose = (event) => {
+      console.log("WebSocket closed:", event.code, event.reason);
     };
 
     function sendMessage() {
