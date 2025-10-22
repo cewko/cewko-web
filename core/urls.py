@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.sitemaps.views import sitemap
+from django.conf import settings
 from core.sitemaps import (
     StaticViewSitemap, 
     WeblogSitemap, 
